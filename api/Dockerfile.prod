@@ -1,0 +1,18 @@
+# 1 Этап: build node_modules
+FROM node:20.11-alpine AS development
+WORKDIR /var/www/back-end-api
+COPY *.json ./
+COPY ./src ./src
+RUN npm i && npm run build
+
+# 2 Этап: build application (`--omit=dev`)
+FROM node:20.11-alpine AS production
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+WORKDIR /var/www/back-end-api
+COPY --from=development /var/www/back-end-api/dist ./dist
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+EXPOSE 4000
+ENTRYPOINT ["node", "dist/main"]
