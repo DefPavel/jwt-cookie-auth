@@ -5,7 +5,7 @@ import { authService } from '@/services/auth/auth.service'
 import { IFormData } from '@/services/auth/auth.types'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import SubmitButton from './submit-button'
 
@@ -14,13 +14,30 @@ interface AuthFormProps {
 }
 
 const AuthForm: FC<AuthFormProps> = ({ isLogin }) => {
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<IFormData>()
+	const [errorMessages, setErrorMessages] = useState<{ [key: string]: string }>(
+		{}
+	)
+	const { register, handleSubmit, reset } = useForm<IFormData>()
 	const { push } = useRouter()
+
+	const handleApiError = (error: any) => {
+		console.error('API error:', error)
+
+		if (error?.response?.data?.errors) {
+			// Создание объекта ошибок, которые будут отображены
+			const errorsMap: { [key: string]: string } = {}
+			error.response.data.errors.forEach(
+				(err: { field: string; message: string }) => {
+					errorsMap[err.field] = err.message
+				}
+			)
+			setErrorMessages(errorsMap)
+		} else {
+			setErrorMessages({
+				general: 'Не верный email или пароль. Пожалуйста, попробуйте снова.',
+			})
+		}
+	}
 
 	const { mutate: mutateLogin, isPending: isLoginPending } = useMutation({
 		mutationKey: ['login'],
@@ -30,6 +47,7 @@ const AuthForm: FC<AuthFormProps> = ({ isLogin }) => {
 			reset()
 			push('/')
 		},
+		onError: handleApiError,
 	})
 
 	const { mutate: mutateRegister, isPending: isRegisterPending } = useMutation({
@@ -40,6 +58,7 @@ const AuthForm: FC<AuthFormProps> = ({ isLogin }) => {
 			reset()
 			push('/')
 		},
+		onError: handleApiError,
 	})
 
 	const isPending = isLoginPending || isRegisterPending
@@ -58,15 +77,17 @@ const AuthForm: FC<AuthFormProps> = ({ isLogin }) => {
 					htmlFor='email'
 					className='block text-xs text-gray-600 uppercase'
 				>
-					Email
+					Введите E-mail
 				</label>
+				{errorMessages.email && (
+					<span className='text-red-500 text-xs'>{errorMessages.email}</span>
+				)}
 				<input
 					id='email'
-					name='email'
 					type='email'
+					{...register('email', { required: 'Email обязателен' })}
 					placeholder='user@acme.com'
 					autoComplete='email'
-					required
 					className='mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm'
 				/>
 			</div>
@@ -76,20 +97,27 @@ const AuthForm: FC<AuthFormProps> = ({ isLogin }) => {
 					htmlFor='password'
 					className='block text-xs text-gray-600 uppercase'
 				>
-					Password
+					Введите Пароль
 				</label>
+				{errorMessages.password && (
+					<span className='text-red-500 text-xs'>{errorMessages.password}</span>
+				)}
 				<input
 					id='password'
-					name='password'
+					{...register('password', { required: 'Пароль обязателен' })}
 					type='password'
 					placeholder='*******'
-					required
 					className='mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm'
 				/>
 			</div>
 
 			<div className='mb-4'>
-				<SubmitButton>Sign in</SubmitButton>
+				{errorMessages.general && (
+					<p className='text-red-500 text-xs'>{errorMessages.general}</p>
+				)}
+				<SubmitButton disabled={isPending}>
+					{isLogin ? 'Войти' : 'Зарегистрироваться'}
+				</SubmitButton>
 			</div>
 		</form>
 	)

@@ -101,7 +101,8 @@ export class AuthService {
       dto.email,
     );
 
-    if (!user) throw new NotFoundException('Данный пользователь не найден!');
+    if (!user)
+      throw new UnauthorizedException('Данный пользователь не найден!');
 
     const isValid = await verify(user.dataValues.password, dto.password);
 

@@ -2,13 +2,22 @@
 
 import { useFormStatus } from 'react-dom'
 
-function SubmitButton({ children }: { children: React.ReactNode }) {
+interface SubmitButtonProps {
+	children: React.ReactNode
+	disabled?: boolean
+}
+
+function SubmitButton({ children, disabled = false }: SubmitButtonProps) {
 	const { pending } = useFormStatus()
+
+	// Определяем, должен ли кнопка быть отключенной
+	const isDisabled = disabled || pending
 
 	return (
 		<button
-			type={pending ? 'button' : 'submit'}
-			aria-disabled={pending}
+			type={isDisabled ? 'button' : 'submit'}
+			aria-disabled={isDisabled}
+			disabled={isDisabled}
 			className='flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none'
 		>
 			{children}
@@ -35,7 +44,7 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
 				</svg>
 			)}
 			<span aria-live='polite' className='sr-only' role='status'>
-				{pending ? 'Loading' : 'Submit form'}
+				{pending ? 'Загрузка...' : 'Submit form'}
 			</span>
 		</button>
 	)

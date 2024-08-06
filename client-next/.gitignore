@@ -39,6 +39,7 @@ test/traces
 .nvmrc
 
 # examples
+.env
 examples/**/out
 examples/**/.env*.local
 

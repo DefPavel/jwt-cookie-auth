@@ -1,8 +1,6 @@
 'use client'
 
 import { getAccessToken } from '@/services/auth/auth.helper'
-import { authService } from '@/services/auth/auth.service'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
