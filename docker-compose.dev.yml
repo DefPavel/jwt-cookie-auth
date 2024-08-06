@@ -19,6 +19,23 @@ services:
     depends_on:
       - postgres-db
 
+  # client
+  nextjs:
+    container_name: client-service
+    restart: unless-stopped
+    build:
+      context: ./client-next
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    networks:
+      - api_network
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - postgres-db
+      - api
+
   # Database
   postgres-db:
     container_name: db-postgres
@@ -42,7 +59,7 @@ services:
     networks:
       - api_network
 
-  # Web gui pg
+  # Web GUI pg
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4:7.2
