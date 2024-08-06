@@ -44,7 +44,7 @@ function SubmitButton({ children, disabled = false }: SubmitButtonProps) {
 				</svg>
 			)}
 			<span aria-live='polite' className='sr-only' role='status'>
-				{pending ? 'Загрузка...' : 'Submit form'}
+				{pending ? 'Загрузка...' : 'Войти'}
 			</span>
 		</button>
 	)
