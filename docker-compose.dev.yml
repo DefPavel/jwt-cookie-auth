@@ -1,20 +1,23 @@
 version: '3.7'
+
 services:
   # Api application nest.js
   api:
     container_name: api-service
     restart: unless-stopped
     build:
-      context: '.'
-      dockerfile: 'Dockerfile.dev'
-    links:
-      - postgres-db
+      context: ./api
+      dockerfile: Dockerfile.dev
     ports:
-      - '81:4000'
+      - '4000:4000'
     networks:
-      - 'api_network'
+      - api_network
     volumes:
-      - './:/var/www/back-end-api'
+      - ./api:/var/www/back-end-api
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - postgres-db
 
   # Database
   postgres-db:
@@ -35,7 +38,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - './db_data:/var/lib/postgresql/data'
+      - pg_data:/var/lib/postgresql/data
     networks:
       - api_network
 
@@ -58,6 +61,7 @@ services:
       - api_network
 
 volumes:
+  pg_data:
   docker-pgadmin:
 
 networks:

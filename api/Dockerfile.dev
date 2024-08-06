@@ -2,5 +2,5 @@ FROM node:20.11-alpine
 WORKDIR /var/www/back-end-api
 
 EXPOSE 4000
-# npm i
+
 ENTRYPOINT ["npm", "run", "start:dev"]
