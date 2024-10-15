@@ -3,12 +3,12 @@ import axios, { CreateAxiosDefaults } from 'axios'
 import { getAccessToken, removeFromStorage } from '@/services/auth/auth.helper'
 
 import { authService } from '@/services/auth/auth.service'
-import { errorCatch, getContentType } from './api.helper'
+import { errorCatch, getHeaders } from './api.helper'
 import { API_URL } from '@/common/constant'
 
 const axiosOptions: CreateAxiosDefaults = {
 	baseURL: API_URL,
-	headers: getContentType(),
+	headers: getHeaders(),
 	withCredentials: true,
 }
 

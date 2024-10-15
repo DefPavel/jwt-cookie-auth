@@ -1,7 +1,6 @@
 version: '3.7'
-
 services:
-  # Api application nest.js
+  # api backend
   api:
     container_name: api-service
     restart: unless-stopped
@@ -16,14 +15,13 @@ services:
       NODE_ENV: production
     depends_on:
       - postgres-db
-
   # client
   nextjs:
     container_name: client-service
     restart: unless-stopped
     build:
       context: ./client-next
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - '3001:3001'
     networks:
@@ -43,13 +41,12 @@ services:
       - '80:80'
     volumes:
       - ./.nginx/default.conf:/etc/nginx/conf.d/default.conf
-
+        - ./.nginx/optimaze.conf:/etc/nginx/optimaze.conf
     networks:
       - api_network
     depends_on:
       - nextjs
       - api
-
   # Database
   postgres-db:
     container_name: db-postgres
@@ -72,7 +69,6 @@ services:
       - pg_data:/var/lib/postgresql/data
     networks:
       - api_network
-
   # Web gui pg
   pgadmin:
     container_name: pgadmin_container

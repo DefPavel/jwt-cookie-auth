@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     build:
       context: ./client-next
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - '3001:3001'
     networks:
