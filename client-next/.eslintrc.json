@@ -1,0 +1,28 @@
+{
+	"extends": [
+		"next/core-web-vitals",
+		"next/typescript",
+		"plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:import/typescript",
+		"prettier"
+	],
+	"plugins": ["prettier"],
+	"rules": {
+		"prettier/prettier": ["error", { "singleQuote": true, "semi": true }],
+		"import/order": [
+			"error",
+			{
+				"groups": [
+					"builtin",
+					"external",
+					"internal",
+					"parent",
+					"sibling",
+					"index"
+				],
+				"newlines-between": "always"
+			}
+		]
+	}
+}

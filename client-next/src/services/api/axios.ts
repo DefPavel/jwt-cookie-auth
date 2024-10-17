@@ -1,10 +1,9 @@
 import axios, { CreateAxiosDefaults } from 'axios'
-
-import { getAccessToken, removeFromStorage } from '@/services/auth/auth.helper'
-
-import { authService } from '@/services/auth/auth.service'
 import { errorCatch, getHeaders } from './api.helper'
-import { API_URL } from '@/common/constant'
+import { getAccessToken, removeFromStorage } from '../auth/auth.helper'
+import { authService } from '../auth/auth.service'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const axiosOptions: CreateAxiosDefaults = {
 	baseURL: API_URL,

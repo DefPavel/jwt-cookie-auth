@@ -1,12 +1,14 @@
-import { ACCESS_TOKEN } from '@/common/constant'
 import Cookies from 'js-cookie'
 
+const ACCESS_TOKEN = process.env.NEXT_PUBLIC_ACCESS_TOKEN
+
 export const getAccessToken = () => {
-	const accessToken = Cookies.get(ACCESS_TOKEN)
-	return accessToken || null
+	if (!ACCESS_TOKEN) return null
+	return Cookies.get(ACCESS_TOKEN) || null
 }
 
 export const saveTokenStorage = (accessToken: string) => {
+	if (!ACCESS_TOKEN) return
 	Cookies.set(ACCESS_TOKEN, accessToken, {
 		domain: 'localhost',
 		sameSite: 'strict',
@@ -15,5 +17,6 @@ export const saveTokenStorage = (accessToken: string) => {
 }
 
 export const removeFromStorage = () => {
+	if (!ACCESS_TOKEN) return
 	Cookies.remove(ACCESS_TOKEN)
 }
