@@ -97,7 +97,7 @@ const AuthForm: FC = () => {
               <FormLabel>Введите пароль</FormLabel>
               <FormMessage />
               <FormControl>
-                <Input type="password" placeholder="*********" {...field} />
+                <Input type="password" placeholder="••••••••••" {...field} />
               </FormControl>
             </FormItem>
           )}
