@@ -1,4 +1,4 @@
-import axios, { CreateAxiosDefaults } from 'axios';
+import axios, { AxiosResponse, CreateAxiosDefaults } from 'axios';
 
 import { getAccessToken, removeFromStorage } from '../auth/auth.helper';
 import { authService } from '../auth/auth.service';
@@ -10,13 +10,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const axiosOptions: CreateAxiosDefaults = {
   baseURL: API_URL,
   headers: getHeaders(),
+  timeout: 10000,
   withCredentials: true,
 };
 
 export const axiosClassic = axios.create(axiosOptions);
 
 export const instance = axios.create(axiosOptions);
-
+// добавления токена в заголовки
 instance.interceptors.request.use(config => {
   const accessToken = getAccessToken();
 
@@ -26,11 +27,15 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
+// для автоматического извлечения поля data из ответа
 instance.interceptors.response.use(
-  config => config,
+  (response: AxiosResponse) => {
+    return response.data; // Возвращаем только поле data
+  },
   async error => {
     const originalRequest = error.config;
 
+    // Обработка 401 ошибки и истекшего токена
     if (
       (error?.response?.status === 401 ||
         errorCatch(error) === 'jwt expired' ||

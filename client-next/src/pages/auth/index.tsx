@@ -12,7 +12,7 @@ export default function AuthPage() {
           <div className="grid gap-2 text-center">
             <h1 className="text-2xl font-bold">Authorization (Next + Nest)</h1>
             <p className="text-sm text-muted-foreground">
-              Введите свои данные для авторизации
+              Для продолжения введите свои данные или зарегистрируйтесь.
             </p>
             <Separator />
           </div>
@@ -30,15 +30,15 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden lg:block">
         <Image
-          src="/Programmer.svg"
+          src="/otp-security.svg"
           alt=""
           aria-hidden="true"
           width={1920}
           height={1080}
           loading="lazy" // Ленивый способ загрузки
-          className="w-full h-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="w-full h-full object-cover"
         />
       </div>
     </div>

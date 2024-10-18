@@ -27,9 +27,11 @@ services:
       context: ./client-next
       dockerfile: Dockerfile.dev
     ports:
-      - '3001:3001'
+      - '3001:3000'
     networks:
       - api_network
+    volumes:
+      - ./client-next:/var/www/client-next
     environment:
       NODE_ENV: development
     depends_on:

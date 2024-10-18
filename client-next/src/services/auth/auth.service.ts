@@ -1,3 +1,4 @@
+import { AxiosCustomError, errorCatch } from '@/services/api/api.helper';
 import {
   removeFromStorage,
   saveTokenStorage,
@@ -24,8 +25,7 @@ export const authService = {
       handleAuthResponse(response);
       return response;
     } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
+      throw errorCatch(error as AxiosCustomError);
     }
   },
 
@@ -40,7 +40,7 @@ export const authService = {
       return response;
     } catch (error) {
       console.error('Registration failed:', error);
-      throw error;
+      throw errorCatch(error as AxiosCustomError);
     }
   },
 
@@ -54,7 +54,7 @@ export const authService = {
       return response;
     } catch (error) {
       console.error('Failed to refresh tokens:', error);
-      throw error;
+      throw errorCatch(error as AxiosCustomError);
     }
   },
 
@@ -70,7 +70,7 @@ export const authService = {
       return data;
     } catch (error) {
       console.error('Logout failed:', error);
-      throw error;
+      throw errorCatch(error as AxiosCustomError);
     }
   },
 };

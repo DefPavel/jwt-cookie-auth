@@ -106,8 +106,6 @@ export class AuthService {
 
     const isValid = await verify(user.dataValues.password, dto.password);
 
-    console.log(isValid);
-
     if (!isValid) throw new UnauthorizedException('Неверный пароль!');
 
     return user.dataValues;

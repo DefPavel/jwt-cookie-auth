@@ -3,10 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
-import { FC } from 'react';
-import { LockClosedIcon } from '@radix-ui/react-icons';
+import { FC, useState } from 'react';
+import { ExclamationTriangleIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import LoadButton from '@/components/ui/load-button';
 import {
@@ -28,7 +29,7 @@ const formSchema = z.object({
       message: 'Не указана почта',
     })
     .email({
-      message: 'Некорректный email',
+      message: 'Некорректный формат email',
     }),
   password: z
     .string()
@@ -42,6 +43,7 @@ const formSchema = z.object({
 
 const AuthForm: FC = () => {
   const { push } = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,7 +65,7 @@ const AuthForm: FC = () => {
     },
     onError: error => {
       // Обработка ошибки
-      console.error('Ошибка при авторизации', error);
+      setErrorMessage(`${error}`);
     },
   });
 
@@ -79,7 +81,7 @@ const AuthForm: FC = () => {
           name="email"
           render={({ field }) => (
             <FormItem className="grid gap-2">
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Введите email</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input type="email" placeholder="m@example.com" {...field} />
@@ -92,10 +94,10 @@ const AuthForm: FC = () => {
           name="password"
           render={({ field }) => (
             <FormItem className="grid gap-2">
-              <FormLabel>Пароль</FormLabel>
+              <FormLabel>Введите пароль</FormLabel>
               <FormMessage />
               <FormControl>
-                <Input type="text" placeholder="*********" {...field} />
+                <Input type="password" placeholder="*********" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -105,6 +107,13 @@ const AuthForm: FC = () => {
           Войти
         </LoadButton>
       </form>
+      {errorMessage && (
+        <Alert variant="destructive">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle>Ошибка</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
     </Form>
   );
 };
