@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@/components/ui/theme-provider'
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
+import { Providers } from './providers'
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
@@ -10,7 +11,9 @@ export default function App({ Component, pageProps }: AppProps) {
 			enableSystem
 			disableTransitionOnChange
 		>
-			<Component {...pageProps} />
+			<Providers>
+				<Component {...pageProps} />
+			</Providers>
 		</ThemeProvider>
 	)
 }

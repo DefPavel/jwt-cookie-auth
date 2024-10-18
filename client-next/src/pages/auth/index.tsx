@@ -11,14 +11,14 @@ export default function AuthPage() {
 					<div className='grid gap-2 text-center'>
 						<h1 className='text-2xl font-bold'>Authorization (Next + Nest)</h1>
 						<p className='text-sm text-muted-foreground'>
-							Введите свои данные, чтобы продолжить
+							Введите свои данные для авторизации
 						</p>
 						<Separator />
 					</div>
 					{/* Форма Авторизации */}
 					<AuthForm />
 					<Separator />
-					<div className='mt-4 text-center text-sm'>
+					<div className='text-center text-sm'>
 						У вас нет аккаунта?{' '}
 						<Link
 							href='#'

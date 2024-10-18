@@ -1,6 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
 import {
 	Form,
@@ -12,8 +13,12 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { FC } from 'react'
-import { Button } from '../ui/button'
 import { LockClosedIcon } from '@radix-ui/react-icons'
+import LoadButton from '../ui/load-button'
+import { authService } from '@/services/auth/auth.service'
+import { IFormData } from '@/types/ auth.types'
+import { saveTokenStorage } from '@/services/auth/auth.helper'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
 	email: z.string().email({
@@ -30,6 +35,7 @@ const formSchema = z.object({
 })
 
 const AuthForm: FC = () => {
+	const { push } = useRouter()
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -38,9 +44,26 @@ const AuthForm: FC = () => {
 		},
 	})
 
+	const { register, handleSubmit, reset } = useForm<IFormData>()
+
+	const { mutate: mutateLogin, isPending: isLoginPending } = useMutation({
+		mutationKey: ['login'],
+		mutationFn: (data: IFormData) => authService.login(data),
+		onSuccess({ accessToken }) {
+			saveTokenStorage(accessToken)
+			reset()
+			push('/')
+		},
+		onError: handleApiError,
+	})
+
+	const onSubmit: SubmitHandler<IFormData> = data => {
+		mutateLogin(data)
+	}
+
 	return (
 		<Form {...form}>
-			<form className='grid gap-4'>
+			<form onSubmit={handleSubmit(onSubmit)} className='grid gap-4'>
 				<FormField
 					control={form.control}
 					name='email'
@@ -77,10 +100,10 @@ const AuthForm: FC = () => {
 						</FormItem>
 					)}
 				/>
-				<Button type='submit' className='w-full'>
+				<LoadButton type='submit' className='w-full'>
 					<LockClosedIcon className='h-5 w-5' aria-hidden='true' />
 					Войти
-				</Button>
+				</LoadButton>
 			</form>
 		</Form>
 	)
