@@ -105,6 +105,6 @@ EXPIRE_DAY_REFRESH_TOKEN=1
 ## Env Frontend
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
 ```
 
