@@ -6,6 +6,7 @@ const roboto = localFont({ src: './fonts/Roboto-Regular.ttf' });
 
 import { Providers } from '@/components/providers';
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { AuthProvider } from '@/context/authContext';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <Providers>
         <main className={roboto.className}>
-          <Component {...pageProps} />
+          <AuthProvider>
+            <Component {...pageProps} />
+          </AuthProvider>
         </main>
       </Providers>
     </ThemeProvider>

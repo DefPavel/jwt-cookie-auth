@@ -14,20 +14,24 @@ const axiosOptions: CreateAxiosDefaults = {
   withCredentials: true,
 };
 
+// Базовый экземпляр для неавторизованных запросов
 export const axiosClassic = axios.create(axiosOptions);
 
+// Авторизованный экземпляр
 export const instance = axios.create(axiosOptions);
+
 // добавления токена в заголовки
 instance.interceptors.request.use(config => {
   const accessToken = getAccessToken();
 
-  if (config?.headers && accessToken)
+  if (config?.headers && accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
+  }
 
   return config;
 });
 
-// для автоматического извлечения поля data из ответа
+// обработки ответов и 401 ошибок
 instance.interceptors.response.use(
   (response: AxiosResponse) => {
     return response.data; // Возвращаем только поле data
@@ -47,8 +51,8 @@ instance.interceptors.response.use(
       try {
         await authService.getNewTokens();
         return instance.request(originalRequest);
-      } catch (error) {
-        const axiosError = error as AxiosCustomError;
+      } catch (retryError) {
+        const axiosError = retryError as AxiosCustomError;
         if (errorCatch(axiosError) === 'jwt expired') removeFromStorage();
       }
     }

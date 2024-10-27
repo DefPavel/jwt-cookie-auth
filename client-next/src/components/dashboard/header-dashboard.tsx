@@ -124,10 +124,10 @@ const HeaderDashboard: FC = () => {
             className="overflow-hidden rounded-full"
           >
             <Image
-              src="/placeholder-user.jpg"
+              src="/male.jpg"
               width={36}
               height={36}
-              alt="Avatar"
+              alt="Avatar image"
               className="overflow-hidden rounded-full"
             />
           </Button>
