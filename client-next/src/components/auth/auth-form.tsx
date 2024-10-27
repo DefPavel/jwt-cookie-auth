@@ -1,9 +1,10 @@
 'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
-import { FC, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 
@@ -21,16 +22,14 @@ import {
 import { authService } from '@/services/auth/auth.service';
 import { IFormData } from '@/types/auth.types';
 import { saveTokenStorage } from '@/services/auth/auth.helper';
+import { useAuth } from '@/context/authContext';
 
+// Определяем схему валидации с помощью Zod
 const formSchema = z.object({
   email: z
     .string()
-    .min(1, {
-      message: 'Не указана почта',
-    })
-    .email({
-      message: 'Некорректный формат email',
-    }),
+    .min(1, { message: 'Не указана почта' })
+    .email({ message: 'Некорректный формат email' }),
   password: z
     .string()
     .min(8, { message: 'Пароль должен быть не меньше 8 символов' })
@@ -42,8 +41,11 @@ const formSchema = z.object({
 });
 
 const AuthForm: FC = () => {
-  const { push } = useRouter();
+  const router = useRouter();
+  const { isAuthenticated, loading, refreshAuthStatus } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Инициализируем форму с использованием React Hook Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,23 +54,34 @@ const AuthForm: FC = () => {
     },
   });
 
+  // Функция для перенаправления пользователя, если он уже авторизован
+  const redirectIfAuthenticated = useCallback(() => {
+    if (!loading && isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, loading, router]);
+
+  // Проверяем статус авторизации при загрузке компонента
+  useEffect(() => {
+    redirectIfAuthenticated();
+  }, [redirectIfAuthenticated]);
+
+  // Настройка мутации для входа
   const { mutate: mutateLogin, isPending: isLoginPending } = useMutation({
     mutationKey: ['login'],
     mutationFn: (data: IFormData) => authService.login(data),
-    onSuccess({ accessToken }) {
-      // записываем токен
-      saveTokenStorage(accessToken);
-      // очищаем форму
-      form.reset();
-      // переходим дальше
-      push('/dashboard');
+    async onSuccess({ accessToken }) {
+      saveTokenStorage(accessToken); // Сохраняем токен в локальное хранилище
+      await refreshAuthStatus(); // Обновляем статус авторизации
+      form.reset(); // Очищаем форму
+      router.push('/dashboard'); // Перенаправляем на главную страницу
     },
     onError: error => {
-      // Обработка ошибки
       setErrorMessage(`${error}`);
     },
   });
 
+  // Обработчик отправки формы
   const onSubmit: SubmitHandler<IFormData> = data => {
     mutateLogin(data);
   };
@@ -76,6 +89,7 @@ const AuthForm: FC = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+        {/* Поле ввода для email */}
         <FormField
           control={form.control}
           name="email"
@@ -89,6 +103,7 @@ const AuthForm: FC = () => {
             </FormItem>
           )}
         />
+        {/* Поле ввода для пароля */}
         <FormField
           control={form.control}
           name="password"
@@ -107,6 +122,7 @@ const AuthForm: FC = () => {
           Войти
         </LoadButton>
       </form>
+      {/* Отображение сообщения об ошибке */}
       {errorMessage && (
         <Alert variant="destructive">
           <ExclamationTriangleIcon className="h-4 w-4" />

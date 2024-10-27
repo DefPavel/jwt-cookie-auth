@@ -25,7 +25,7 @@ export class User extends Model<User> {
   firstName: string;
 
   @Column({
-    type: DataType.STRING(100),
+    type: DataType.STRING(),
     unique: true,
     allowNull: false,
     comment: 'Почта пользователя',
@@ -41,7 +41,6 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.SMALLINT(),
-    unique: true,
     allowNull: false,
     comment: 'Пол',
   })

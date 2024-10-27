@@ -37,7 +37,7 @@ async function bootstrap() {
           errors: formattedErrors,
         });
       },
-      stopAtFirstError: true,
+      stopAtFirstError: false,
     }),
   );
 

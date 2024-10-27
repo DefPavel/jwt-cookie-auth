@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
@@ -71,9 +72,14 @@ export class AuthController {
     @Body() dto: UserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { refreshToken, ...response } = await this.authService.register(dto);
-    this.authService.addRefreshTokenToResponse(res, refreshToken);
-    return response;
+    try {
+      const { refreshToken, ...response } =
+        await this.authService.register(dto);
+      this.authService.addRefreshTokenToResponse(res, refreshToken);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -84,6 +90,7 @@ export class AuthController {
    * @returns Ответ с новыми токенами и информацией о пользователе.
    */
   @Post('login/access-token')
+  @HttpCode(200)
   async getNewTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -104,6 +111,27 @@ export class AuthController {
     return response;
   }
 
+  @Get('verifyToken')
+  async verifyToken(@Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || (Array.isArray(authHeader) && authHeader.length === 0)) {
+      throw new UnauthorizedException('authorization header is missing');
+    }
+    // Используем первую строку, если authHeader массив, иначе проверяем сам authHeader
+    const tokenHeader = Array.isArray(authHeader) ? authHeader[0] : authHeader;
+    // Проверяем, начинается ли строка с 'Bearer '
+    if (!tokenHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Invalid token format');
+    }
+    const token = tokenHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('Token is missing');
+    }
+
+    const decoded = await this.authService.verifyToken(token);
+    return { isValid: true, user: decoded };
+  }
+
   /**
    * Метод для выхода пользователя.
    *
@@ -111,6 +139,7 @@ export class AuthController {
    * @returns Истина, если выход успешен.
    */
   @Post('logout')
+  @HttpCode(200)
   async logout(@Res({ passthrough: true }) res: Response) {
     this.authService.removeRefreshTokenFromResponse(res);
     return true;

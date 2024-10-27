@@ -1,5 +1,6 @@
 import { AxiosCustomError, errorCatch } from '@/services/api/api.helper';
 import {
+  getAccessToken,
   removeFromStorage,
   saveTokenStorage,
 } from '@/services/auth/auth.helper';
@@ -43,6 +44,26 @@ export const authService = {
     }
   },
 
+  async checkAuth() {
+    const token = getAccessToken();
+    if (!token) return { isValid: false }; // Токена нет
+
+    try {
+      const { data: response } = await axiosClassic.get<{ isValid: boolean }>(
+        '/auth/verifyToken',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response;
+    } catch (error) {
+      console.warn('Authorization check failed:', error); // Логируем ошибку
+      return { isValid: false };
+    }
+  },
   // Получение нового токена
   async getNewTokens() {
     try {

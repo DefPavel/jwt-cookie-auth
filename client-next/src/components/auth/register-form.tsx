@@ -32,6 +32,7 @@ import { saveTokenStorage } from '@/services/auth/auth.helper';
 const formSchema = z.object({
   email: z
     .string()
+    .max(255)
     .min(1, {
       message: 'Не указана почта',
     })
@@ -46,13 +47,13 @@ const formSchema = z.object({
       message:
         'Пароль должен содержать минимум 8 символов, одну заглавную букву, одну строчную букву, одну цифру и один специальный символ',
     }),
-  firstName: z.string().min(1, {
+  firstName: z.string().max(80).min(1, {
     message: 'Не указано отчество',
   }),
-  name: z.string().min(1, {
+  name: z.string().max(35).min(1, {
     message: 'Не указано имя',
   }),
-  lastName: z.string().min(1, {
+  lastName: z.string().max(85).min(1, {
     message: 'Не указано фамилия',
   }),
   gender: z.enum(['1', '0']),

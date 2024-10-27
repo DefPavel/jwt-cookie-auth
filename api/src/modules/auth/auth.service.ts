@@ -21,6 +21,18 @@ export class AuthService {
     private userService: UsersService,
   ) {}
 
+  // Метод для верификации токена
+  async verifyToken(token: string) {
+    try {
+      const decoded = await this.jwt.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_KEY'),
+      });
+      return decoded;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
+
   private getEnvData(): {
     REFRESH_TOKEN_NAME: string;
     EXPIRE_DAY_REFRESH_TOKEN: number;
