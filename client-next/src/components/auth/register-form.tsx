@@ -7,6 +7,13 @@ import { FC, useState } from 'react';
 import { ExclamationTriangleIcon, PersonIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import LoadButton from '@/components/ui/load-button';
@@ -48,6 +55,7 @@ const formSchema = z.object({
   lastName: z.string().min(1, {
     message: 'Не указано фамилия',
   }),
+  gender: z.enum(['1', '0']),
 });
 
 const RegisterForm: FC = () => {
@@ -61,10 +69,11 @@ const RegisterForm: FC = () => {
       firstName: '',
       name: '',
       lastName: '',
+      gender: '1',
     },
   });
 
-  const { mutate: mutateLogin, isPending: isLoginPending } = useMutation({
+  const { mutate: mutateRegister, isPending: isRegisterPending } = useMutation({
     mutationKey: ['register'],
     mutationFn: (data: IFormData) => authService.register(data),
     onSuccess({ accessToken }) {
@@ -82,7 +91,7 @@ const RegisterForm: FC = () => {
   });
 
   const onSubmit: SubmitHandler<IFormData> = data => {
-    mutateLogin(data);
+    mutateRegister(data);
   };
 
   return (
@@ -153,7 +162,32 @@ const RegisterForm: FC = () => {
             </FormItem>
           )}
         />
-        <LoadButton loading={isLoginPending} type="submit" className="w-full">
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem className="grid gap-2">
+              <FormLabel>Выбрать пол</FormLabel>
+              <FormMessage />
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Не указано" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">Мужской</SelectItem>
+                  <SelectItem value="0">Женский</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+        <LoadButton
+          loading={isRegisterPending}
+          type="submit"
+          className="w-full"
+        >
           <PersonIcon className="h-5 w-5" aria-hidden="true" />
           Регистрация
         </LoadButton>

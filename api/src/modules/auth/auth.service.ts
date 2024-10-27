@@ -98,11 +98,16 @@ export class AuthService {
     );
 
     if (!user)
-      throw new UnauthorizedException('Данный пользователь не найден!');
+      throw new UnauthorizedException(
+        'Неправильный адрес электронной почты или пароль. Пожалуйста, попробуйте еще раз.',
+      );
 
     const isValid = await verify(user.dataValues.password, dto.password);
 
-    if (!isValid) throw new UnauthorizedException('Неверный пароль!');
+    if (!isValid)
+      throw new UnauthorizedException(
+        'Неправильный адрес электронной почты или пароль. Пожалуйста, попробуйте еще раз.',
+      );
 
     return user.dataValues;
   }

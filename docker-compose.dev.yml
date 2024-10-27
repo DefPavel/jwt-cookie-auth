@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  # Api application nest.js
+  # Backend
   api:
     container_name: api-service
     restart: unless-stopped
@@ -18,8 +18,9 @@ services:
       NODE_ENV: development
     depends_on:
       - postgres-db
+      - redis
 
-  # client
+  # Frontend
   nextjs:
     container_name: client-service
     restart: unless-stopped
@@ -78,6 +79,19 @@ services:
       - postgres-db
     networks:
       - api_network
+
+  # Redis
+  redis:
+    container_name: redis-service
+    restart: unless-stopped
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+    networks:
+      - api_network
+    environment:
+      REDIS_PASSWORD: m7v.8^CA
+    command: ['redis-server', '--requirepass m7v.8^CA']
 
 volumes:
   pg_data:

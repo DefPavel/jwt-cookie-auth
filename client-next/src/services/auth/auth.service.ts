@@ -39,7 +39,6 @@ export const authService = {
       handleAuthResponse(response);
       return response;
     } catch (error) {
-      console.error('Registration failed:', error);
       throw errorCatch(error as AxiosCustomError);
     }
   },

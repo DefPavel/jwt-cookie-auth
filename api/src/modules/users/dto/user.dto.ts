@@ -17,7 +17,7 @@ export class UserDto {
   @IsNotEmpty({ message: 'Укажите Имя пользователя' })
   readonly name: string;
 
-  @IsEnum([0, 1], { message: 'Не верный тип ввода gender' })
+  @IsEnum(['0', '1'], { message: 'Не верный тип ввода gender' })
   readonly gender: Gender;
 
   @IsNotEmpty({ message: 'Укажите адрес электронной почты' })

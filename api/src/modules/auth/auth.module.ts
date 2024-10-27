@@ -8,18 +8,21 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { LoginAttemptsService } from './login-attempts.service';
+import { RedisModule } from '@database/redis.module';
 
 @Module({
   imports: [
     PassportModule,
     UsersModule,
+    RedisModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: getJwtConfig,
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, LoginAttemptsService],
   controllers: [AuthController],
 })
 export class AuthModule {}

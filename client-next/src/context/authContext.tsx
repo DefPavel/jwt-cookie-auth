@@ -23,6 +23,8 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       const authStatus = await checkAuth();
+      console.log(authStatus);
+
       setIsAuthenticated(authStatus);
       setLoading(false);
     };

@@ -7,6 +7,8 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
@@ -14,6 +16,7 @@ import { DoesUserExist } from 'src/guards/doesUserExist.guard';
 
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { LoginAttemptsService } from './login-attempts.service';
 
 /**
  * Контроллер для управления аутентификацией.
@@ -23,6 +26,7 @@ export class AuthController {
   constructor(
     private configService: ConfigService,
     private authService: AuthService,
+    private loginAttemptsService: LoginAttemptsService,
   ) {}
 
   /**
@@ -33,7 +37,21 @@ export class AuthController {
    * @returns Ответ с токенами и информацией о пользователе.
    */
   @Post('login')
-  async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
+  @HttpCode(200)
+  async login(
+    @Body() dto: AuthDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const ip =
+      (req.headers['x-forwarded-for'] as string) || req.ip || '0.0.0.0';
+
+    const attempts = await this.loginAttemptsService.getAttempts(ip);
+    if (attempts >= 5) {
+      throw new BadRequestException(
+        'Слишком много неуспешных попыток входа. Пожалуйста, попробуйте позже.',
+      );
+    }
     const { refreshToken, ...response } = await this.authService.login(dto);
     this.authService.addRefreshTokenToResponse(res, refreshToken);
     return response;
@@ -47,6 +65,7 @@ export class AuthController {
    * @returns Ответ с токенами и информацией о пользователе.
    */
   @Post('register')
+  @HttpCode(200)
   @UseGuards(DoesUserExist)
   async register(
     @Body() dto: UserDto,
