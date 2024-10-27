@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { ListFilter, File } from 'lucide-react';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import {
   Card,
@@ -27,43 +28,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
-
-const orders = [
-  {
-    customer: 'Liam Johnson',
-    email: 'liam@example.com',
-    type: 'Sale',
-    status: 'Fulfilled',
-    date: '2023-06-23',
-    amount: '$250.00',
-  },
-  {
-    customer: 'Olivia Smith',
-    email: 'olivia@example.com',
-    type: 'Refund',
-    status: 'Declined',
-    date: '2023-06-24',
-    amount: '$150.00',
-  },
-  {
-    customer: 'Noah Williams',
-    email: 'noah@example.com',
-    type: 'Subscription',
-    status: 'Fulfilled',
-    date: '2023-06-25',
-    amount: '$350.00',
-  },
-  {
-    customer: 'Emma Brown',
-    email: 'emma@example.com',
-    type: 'Sale',
-    status: 'Fulfilled',
-    date: '2023-06-26',
-    amount: '$450.00',
-  },
-];
+import { userService } from '@/services/auth/users.service';
+import { IUser } from '@/types/user.types';
 
 const TabsWeeks: FC = () => {
+  // пример получить данные
+  const { data: users }: UseQueryResult<IUser[], Error> = useQuery({
+    queryKey: ['users'],
+    queryFn: () => userService.getAllUsers(),
+  });
+
   return (
     <Tabs defaultValue="week">
       <div className="flex items-center">
@@ -99,8 +73,8 @@ const TabsWeeks: FC = () => {
       <TabsContent value="week">
         <Card x-chunk="dashboard-05-chunk-3">
           <CardHeader className="px-7">
-            <CardTitle>Orders</CardTitle>
-            <CardDescription>Recent orders from your store.</CardDescription>
+            <CardTitle>Users</CardTitle>
+            <CardDescription>list users.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -114,31 +88,24 @@ const TabsWeeks: FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.map((order, index) => (
+                {users?.map((user, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <div className="font-medium">{order.customer}</div>
+                      <div className="font-medium">{user.lastName}</div>
                       <div className="hidden text-sm text-muted-foreground md:inline">
-                        {order.email}
+                        {user.email}
                       </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      {order.type}
+                      {user.name}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <Badge
-                        className="text-xs"
-                        variant={
-                          order.status === 'Fulfilled' ? 'secondary' : 'outline'
-                        }
-                      >
-                        {order.status}
-                      </Badge>
+                      <Badge className="text-xs">{user.gender}</Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {order.date}
+                      {new Date(user.createdAt).toISOString().split('T')[0]}
                     </TableCell>
-                    <TableCell className="text-right">{order.amount}</TableCell>
+                    <TableCell className="text-right">{user.id}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

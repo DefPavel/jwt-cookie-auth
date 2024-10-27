@@ -23,7 +23,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const verifyUser = async () => {
     setLoading(true);
     const authStatus = await authService.checkAuth();
-    setIsAuthenticated(authStatus.isValid);
+    setIsAuthenticated(authStatus?.isValid);
     setLoading(false);
   };
 

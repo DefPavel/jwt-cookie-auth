@@ -1,8 +1,10 @@
-import { IUser } from './user.types';
-
 export interface IAuthResponse {
   accessToken: string;
-  user: IUser;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 export interface IFormData {

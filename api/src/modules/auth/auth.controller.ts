@@ -112,6 +112,7 @@ export class AuthController {
   }
 
   @Get('verifyToken')
+  @HttpCode(200)
   async verifyToken(@Req() req: Request) {
     const authHeader = req.headers['authorization'];
     if (!authHeader || (Array.isArray(authHeader) && authHeader.length === 0)) {

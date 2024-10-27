@@ -23,7 +23,6 @@ export const instance = axios.create(axiosOptions);
 // добавления токена в заголовки
 instance.interceptors.request.use(config => {
   const accessToken = getAccessToken();
-
   if (config?.headers && accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
