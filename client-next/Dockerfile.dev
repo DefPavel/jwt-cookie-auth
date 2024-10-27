@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Expose порта для разработки
-EXPOSE 3001
+EXPOSE 3000
 
 # Используем команду для запуска в режиме разработки
 CMD ["npm", "run", "dev"]

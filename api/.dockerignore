@@ -11,7 +11,6 @@ test
 db_data
 
 # Environment (contains sensitive data)
-.env
 .env.example
 
 # Files not required for production

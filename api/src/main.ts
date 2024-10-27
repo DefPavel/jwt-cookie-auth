@@ -1,6 +1,7 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
+import * as compression from 'compression';
 
 import { AppModule } from './app.module';
 
@@ -9,10 +10,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.use(cookieParser());
+  app.use(compression());
   app.enableCors({
     origin: [
-      'http://localhost:80',
-      'http://localhost:3001',
+      'http://localhost',
+      'http://localhost:3000',
       'http://localhost:4000',
     ],
     credentials: true,

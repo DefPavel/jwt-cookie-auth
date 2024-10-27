@@ -23,7 +23,7 @@ services:
       context: ./client-next
       dockerfile: Dockerfile.prod
     ports:
-      - '3001:3001'
+      - '3000:3000'
     networks:
       - api_network
     environment:
@@ -39,9 +39,9 @@ services:
     image: nginx:stable-alpine
     ports:
       - '80:80'
+      - '443:443'
     volumes:
       - ./.nginx/default.conf:/etc/nginx/conf.d/default.conf
-        - ./.nginx/optimaze.conf:/etc/nginx/optimaze.conf
     networks:
       - api_network
     depends_on:

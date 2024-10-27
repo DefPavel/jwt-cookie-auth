@@ -1,10 +1,12 @@
 {
   "name": "my-next-app",
+  "description": "front-end application Auth",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write ."
@@ -28,6 +30,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.453.0",
     "next": "14.2.15",
+    "next-sitemap": "^4.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
