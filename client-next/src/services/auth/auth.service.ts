@@ -57,10 +57,8 @@ export const authService = {
           },
         },
       );
-
       return response;
-    } catch (error) {
-      console.warn('Authorization check failed:', error); // Логируем ошибку
+    } catch {
       return { isValid: false };
     }
   },
